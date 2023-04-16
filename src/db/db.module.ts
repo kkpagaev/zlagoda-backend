@@ -14,6 +14,7 @@ const dbProvider = {
 }
 
 @Module({
+  exports: [dbProvider],
   providers: [dbProvider],
 })
 export class DbModule {}
