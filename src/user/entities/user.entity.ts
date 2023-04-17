@@ -1,3 +1,5 @@
+import { Exclude } from "class-transformer"
+
 export enum Role {
   User = "user",
   Admin = "admin",
@@ -11,7 +13,12 @@ export class User {
 
   name: string
 
+  @Exclude()
   password: string
 
   roles: Role[]
+
+  constructor(partial: Partial<User>) {
+    Object.assign(this, partial)
+  }
 }
