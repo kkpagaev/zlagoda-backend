@@ -1,9 +1,10 @@
-import { Injectable } from "@nestjs/common"
+import { Injectable, NotFoundException } from "@nestjs/common"
 import { Pool } from "pg"
 import { InjectDB } from "../db/inject-db.decorator"
 import { CreateUserDto } from "./dto/create-user.dto"
 import { UpdateUserDto } from "./dto/update-user.dto"
 import { hash } from "bcrypt"
+import { User } from "./entities/user.entity"
 
 const BCRYPT_SALT_ROUNDS = 12
 
@@ -25,7 +26,7 @@ export class UserService {
       [name, email, newPassword],
     )
 
-    return user.rows[0]
+    return this.mapUser(user.rows[0])
   }
 
   async findAll() {
@@ -42,5 +43,27 @@ export class UserService {
 
   remove(id: number) {
     return `This action removes a #${id} user`
+  }
+
+  async findByEmail(email: string): Promise<User> {
+    const result = await this.db.query("SELECT * FROM users WHERE email = $1", [
+      email,
+    ])
+    if (result.rows.length === 0) {
+      throw new NotFoundException("User not found")
+    }
+
+    const user = this.mapUser(result.rows[0])
+
+    return user
+  }
+
+  private mapUser(user: any): User {
+    return {
+      id: user.id,
+      email: user.email,
+      name: user.name,
+      password: user.password,
+    }
   }
 }
