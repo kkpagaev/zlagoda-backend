@@ -1,3 +1,4 @@
+import { ValidationPipe } from "@nestjs/common"
 import { NestFactory } from "@nestjs/core"
 import { AppModule } from "./app.module"
 import { swagger } from "./swagger"
@@ -8,6 +9,7 @@ async function bootstrap() {
   if (process.env.NODE_ENV === "dev") {
     swagger(app)
   }
+  app.useGlobalPipes(new ValidationPipe())
 
   await app.listen(3000)
 }
