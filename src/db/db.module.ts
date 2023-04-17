@@ -64,7 +64,9 @@ const dbProvider = {
       port: conf.get("DB_PORT"),
     })
 
-    await migrate(pool)
+    if (conf.get("RUN_MIGRATIONS") === "true") {
+      await migrate(pool)
+    }
 
     return pool
   },
