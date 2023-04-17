@@ -46,6 +46,28 @@ export class UserService {
     return user
   }
 
+  async findOneWithRoles(id: number) {
+    const result = await this.db.query(
+      `
+SELECT users.id, users.name, users.email, json_agg(roles.name) as roles
+FROM users
+LEFT JOIN roles_users ON users.id = roles_users.user_id
+LEFT JOIN roles ON roles_users.role_id = roles.id
+WHERE users.id = $1
+GROUP BY users.id
+`,
+      [id],
+    )
+
+    if (result.rows.length === 0) {
+      throw new NotFoundException("User not found")
+    }
+
+    const user = this.mapUser(result.rows[0])
+
+    return user
+  }
+
   update(id: number, dto: UpdateUserDto) {
     return `This action updates a #${id} user`
   }
@@ -73,6 +95,7 @@ export class UserService {
       email: user.email,
       name: user.name,
       password: user.password,
+      roles: user.roles,
     }
   }
 }
