@@ -15,16 +15,20 @@ export class AuthService {
   ) {}
 
   async signIn(id: string, pass: string): Promise<any> {
-    const empl = await this.epmloyeeService.findOne(id)
-    if (!empl || !compareSync(pass, empl.password)) {
+    try {
+      const empl = await this.epmloyeeService.findOne(id)
+      if (!empl || !compareSync(pass, empl.password)) {
+        throw new UnauthorizedException("Invalid credentials")
+      }
+
+      const payload: JwtPayload = { id_employee: empl.id_employee }
+      const accessToken = await this.jwtService.signAsync(payload)
+
+      return {
+        accessToken,
+      }
+    } catch (error) {
       throw new UnauthorizedException("Invalid credentials")
-    }
-
-    const payload: JwtPayload = { id_employee: empl.id_employee }
-    const accessToken = await this.jwtService.signAsync(payload)
-
-    return {
-      accessToken,
     }
   }
 }

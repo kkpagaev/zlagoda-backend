@@ -8,5 +8,5 @@ export class SignInDto {
 
   @IsNotEmpty()
   @ApiProperty()
-  empl_surname: string
+  id_employee: string
 }

@@ -14,8 +14,8 @@ export class AuthController {
 
   @Post("sign-in")
   @Public()
-  async signIn(@Body() { empl_surname, password }: SignInDto) {
-    return await this.authService.signIn(empl_surname, password)
+  async signIn(@Body() { id_employee, password }: SignInDto) {
+    return await this.authService.signIn(id_employee, password)
   }
 
   @Post("test")
