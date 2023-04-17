@@ -5,7 +5,6 @@ import { SignInDto } from "./dto/sign-in.dto"
 import { RequireAuthentication } from "./require-authentification.decorator"
 import { Request } from "express"
 import { Role } from "../user/entities/user.entity"
-import { Roles } from "./roles.decorator"
 
 @Controller("auth")
 @ApiTags("auth")
@@ -18,8 +17,7 @@ export class AuthController {
   }
 
   @Post("test")
-  @RequireAuthentication()
-  @Roles(Role.Admin, Role.User)
+  @RequireAuthentication(Role.Admin, Role.User)
   test(@Req() req: Request) {
     return req.user
   }
