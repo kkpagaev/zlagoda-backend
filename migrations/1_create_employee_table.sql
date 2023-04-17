@@ -1,7 +1,7 @@
 CREATE TYPE role AS ENUM ('user', 'admin', 'moderator');
 
 CREATE TABLE IF NOT EXISTS Employee (
-  id_employee SERIAL NOT NULL,
+  id_employee VARCHAR(10) NOT NULL,
   empl_name VARCHAR(50) NOT NULL,
   empl_surname VARCHAR(50) NOT NULL,
   empl_patronymic VARCHAR(50) NOT NULL,

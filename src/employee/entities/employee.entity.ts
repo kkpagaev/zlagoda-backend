@@ -7,7 +7,7 @@ export enum Role {
 }
 
 export class Employee {
-  id_employee: number
+  id_employee: string
 
   empl_name: string
 

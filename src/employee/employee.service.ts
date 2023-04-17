@@ -25,10 +25,12 @@ export class EmployeeService {
     password,
   }: CreateEmployeeDto) {
     const newPassword = await this.hashPassword(password)
+    // TODO generate id
+    const id_employee = "1231231233"
 
     const empl = await this.db.query(
-      "INSERT INTO Employee (empl_name, empl_surname, empl_patronymic, password) VALUES ($1, $2, $3, $4) RETURNING *",
-      [empl_name, empl_surname, empl_patronymic, newPassword],
+      "INSERT INTO Employee (id_employee, empl_name, empl_surname, empl_patronymic, password) VALUES ($1, $2, $3, $4, $5) RETURNING *",
+      [id_employee, empl_name, empl_surname, empl_patronymic, newPassword],
     )
 
     return this.map(empl.rows[0])
@@ -38,7 +40,7 @@ export class EmployeeService {
     return (await this.db.query("SELECT version()")).rows
   }
 
-  async findOne(id: number) {
+  async findOne(id: string) {
     const result = await this.db.query(
       "SELECT * FROM Employee WHERE id_employee = $1",
       [id],
@@ -52,7 +54,7 @@ export class EmployeeService {
     return empl
   }
 
-  async findOneWithRole(id: number, role: Role) {
+  async findOneWithRole(id: string, role: Role) {
     const result = await this.db.query(
       `
 SELECT * FROM Employee WHERE id_employee = $1 AND role = $2
@@ -70,11 +72,11 @@ ORDER BY id_employee ASC
     return empl
   }
 
-  update(id: number, dto: UpdateEmployeeDto) {
+  update(id: string, dto: UpdateEmployeeDto) {
     return `This action updates a #${id} employee`
   }
 
-  remove(id: number) {
+  remove(id: string) {
     return `This action removes a #${id} employee`
   }
 
