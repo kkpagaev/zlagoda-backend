@@ -6,19 +6,21 @@ export enum Role {
   Moderator = "moderator",
 }
 
-export class User {
-  id: number
+export class Employee {
+  id_employee: number
 
-  email: string
+  empl_name: string
 
-  name: string
+  empl_surname: string
+
+  empl_patronymic: string
 
   @Exclude()
   password: string
 
   role: Role
 
-  constructor(partial: Partial<User>) {
+  constructor(partial: Partial<Employee>) {
     Object.assign(this, partial)
   }
 }

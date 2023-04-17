@@ -2,9 +2,9 @@ import { Module } from "@nestjs/common"
 import { AppController } from "./app.controller"
 import { AppService } from "./app.service"
 import { DbModule } from "./db/db.module"
-import { UserModule } from "./user/user.module"
 import { ConfigModule } from "@nestjs/config"
 import { AuthModule } from "./auth/auth.module"
+import { EmployeeModule } from "./employee/employee.module"
 
 @Module({
   imports: [
@@ -12,7 +12,7 @@ import { AuthModule } from "./auth/auth.module"
       envFilePath: [".env", ".env." + process.env.NODE_ENV],
     }),
     DbModule,
-    UserModule,
+    EmployeeModule,
     AuthModule,
   ],
   controllers: [AppController],

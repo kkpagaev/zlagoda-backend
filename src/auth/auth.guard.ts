@@ -8,8 +8,8 @@ import { ConfigService } from "@nestjs/config"
 import { Reflector } from "@nestjs/core"
 import { JwtService } from "@nestjs/jwt"
 import { Request } from "express"
-import { Role } from "../user/entities/user.entity"
-import { UserService } from "../user/user.service"
+import { Role } from "../employee/entities/employee.entity"
+import { EmployeeService } from "../employee/employee.service"
 import { JwtPayload } from "./auth.service"
 
 @Injectable()
@@ -18,7 +18,7 @@ export class AuthGuard implements CanActivate {
 
   constructor(
     private jwtService: JwtService,
-    private userService: UserService,
+    private emplService: EmployeeService,
     config: ConfigService,
     private reflector: Reflector,
   ) {
@@ -44,10 +44,13 @@ export class AuthGuard implements CanActivate {
       const payload = await this.jwtService.verifyAsync<JwtPayload>(token, {
         secret: this.jwtSecret,
       })
-      const user = await this.userService.findOneWithRole(payload.user_id, role)
+      const empl = await this.emplService.findOneWithRole(
+        payload.id_employee,
+        role,
+      )
 
-      request["user"] = user
-    } catch {
+      request["user"] = empl
+    } catch (e) {
       throw new UnauthorizedException()
     }
     return true

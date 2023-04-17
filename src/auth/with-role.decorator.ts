@@ -1,4 +1,4 @@
 import { SetMetadata } from "@nestjs/common"
-import { Role } from "../user/entities/user.entity"
+import { Role } from "../employee/entities/employee.entity"
 
 export const WithRole = (role: Role) => SetMetadata("role", role)
