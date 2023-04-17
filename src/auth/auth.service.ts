@@ -20,7 +20,7 @@ export class AuthService {
     if (!user || !compareSync(pass, user.password)) {
       throw new UnauthorizedException("Invalid credentials")
     }
-    // TODO: return a JWT
+
     const payload: JwtPayload = { user_id: user.id, email: user.email }
     const accessToken = await this.jwtService.signAsync(payload)
 
