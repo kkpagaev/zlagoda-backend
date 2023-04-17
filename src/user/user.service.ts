@@ -94,6 +94,7 @@ GROUP BY users.id
       id: user.id,
       name: user.name,
       email: user.email,
+      password: user.password,
       roles: user.roles,
     })
   }
