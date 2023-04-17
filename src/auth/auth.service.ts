@@ -3,7 +3,7 @@ import { UserService } from "../user/user.service"
 import { compareSync } from "bcrypt"
 import { JwtService } from "@nestjs/jwt"
 
-interface JwtPayload {
+export interface JwtPayload {
   user_id: number
   email: string
 }

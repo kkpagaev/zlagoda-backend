@@ -33,8 +33,17 @@ export class UserService {
     return (await this.db.query("SELECT version()")).rows
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} user`
+  async findOne(id: number) {
+    const result = await this.db.query("SELECT * FROM users WHERE id = $1", [
+      id,
+    ])
+    if (result.rows.length === 0) {
+      throw new NotFoundException("User not found")
+    }
+
+    const user = this.mapUser(result.rows[0])
+
+    return user
   }
 
   update(id: number, dto: UpdateUserDto) {
