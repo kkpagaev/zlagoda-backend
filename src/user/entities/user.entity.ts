@@ -1,7 +1,7 @@
-export class Role {
-  id: number
-
-  name: string
+export enum Role {
+  User = "user",
+  Admin = "admin",
+  Moderator = "moderator",
 }
 
 export class User {
