@@ -4,8 +4,8 @@ import { AuthService } from "./auth.service"
 import { SignInDto } from "./dto/sign-in.dto"
 import { Request } from "express"
 import { Role } from "../user/entities/user.entity"
-import { Roles } from "./roles.decorator"
 import { Public } from "./public.decorator"
+import { WithRole } from "./with-role.decorator"
 
 @Controller("auth")
 @ApiTags("auth")
@@ -19,7 +19,7 @@ export class AuthController {
   }
 
   @Post("test")
-  @Roles(Role.Admin, Role.User)
+  @WithRole(Role.Admin)
   @ApiBearerAuth("jwt")
   test(@Req() req: Request) {
     return req.user

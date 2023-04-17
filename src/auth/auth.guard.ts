@@ -8,6 +8,7 @@ import { ConfigService } from "@nestjs/config"
 import { Reflector } from "@nestjs/core"
 import { JwtService } from "@nestjs/jwt"
 import { Request } from "express"
+import { Role } from "../user/entities/user.entity"
 import { UserService } from "../user/user.service"
 import { JwtPayload } from "./auth.service"
 
@@ -38,27 +39,18 @@ export class AuthGuard implements CanActivate {
     if (!token) {
       return false
     }
-    const roles = this.reflector.get<string[]>("roles", context.getHandler())
+    const role = this.reflector.get<Role>("role", context.getHandler())
     try {
       const payload = await this.jwtService.verifyAsync<JwtPayload>(token, {
         secret: this.jwtSecret,
       })
-      const user = await this.userService.findOneWithRoles(payload.user_id)
-      if (!this.matchRoles(user.roles, roles)) {
-        throw new UnauthorizedException()
-      }
+      const user = await this.userService.findOneWithRole(payload.user_id, role)
+
       request["user"] = user
     } catch {
       throw new UnauthorizedException()
     }
     return true
-  }
-
-  private matchRoles(userRoles: string[], requiredRoles: string[]): boolean {
-    if (!requiredRoles) {
-      return true
-    }
-    return userRoles.some((role) => requiredRoles.includes(role))
   }
 
   private extractTokenFromHeader(request: Request): string | undefined {

@@ -16,7 +16,7 @@ export class User {
   @Exclude()
   password: string
 
-  roles: Role[]
+  role: Role
 
   constructor(partial: Partial<User>) {
     Object.assign(this, partial)

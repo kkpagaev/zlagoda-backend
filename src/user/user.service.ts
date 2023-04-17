@@ -4,7 +4,7 @@ import { InjectDB } from "../db/inject-db.decorator"
 import { CreateUserDto } from "./dto/create-user.dto"
 import { UpdateUserDto } from "./dto/update-user.dto"
 import { hash } from "bcrypt"
-import { User } from "./entities/user.entity"
+import { Role, User } from "./entities/user.entity"
 
 const BCRYPT_SALT_ROUNDS = 12
 
@@ -46,17 +46,13 @@ export class UserService {
     return user
   }
 
-  async findOneWithRoles(id: number) {
+  async findOneWithRole(id: number, role: Role) {
     const result = await this.db.query(
       `
-SELECT users.id, users.name, users.email, json_agg(roles.name) as roles
-FROM users
-LEFT JOIN roles_users ON users.id = roles_users.user_id
-LEFT JOIN roles ON roles_users.role_id = roles.id
-WHERE users.id = $1
-GROUP BY users.id
+SELECT id, name, email, role FROM users WHERE id = $1 AND role = $2
+ORDER BY id ASC
 `,
-      [id],
+      [id, role],
     )
 
     if (result.rows.length === 0) {
@@ -95,7 +91,7 @@ GROUP BY users.id
       name: user.name,
       email: user.email,
       password: user.password,
-      roles: user.roles,
+      role: user.role,
     })
   }
 }
