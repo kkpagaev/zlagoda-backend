@@ -22,6 +22,6 @@ export class AuthController {
   @WithRole(Role.User)
   @ApiBearerAuth("jwt")
   test(@Req() req: Request) {
-    return req.user
+    return (req as any).user
   }
 }
