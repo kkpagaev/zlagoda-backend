@@ -1,57 +1,34 @@
 import { Injectable } from "@nestjs/common"
 import { CreateCategoryDto } from "./dto/create-category.dto"
 import { UpdateCategoryDto } from "./dto/update-category.dto"
-import { InjectDB } from "src/db/inject-db.decorator"
-import { Pool } from "pg"
 import { Category } from "./entities/category.model"
-import { nullable } from "pratica"
-import { CategoryEntity } from "./entities/category.entity"
+import { CategoryRepository } from "./category.repository"
+import { throwIfNoValue } from "src/shared/utils/throw-if-no-value"
+import { NotFoundException } from "@nestjs/common"
 
 @Injectable()
 export class CategoryService {
-  constructor(
-    @InjectDB()
-    private readonly pool: Pool,
-  ) {}
+  constructor(private readonly repo: CategoryRepository) {}
 
   public create(createCategoryDto: CreateCategoryDto): Promise<Category> {
-    return this.pool
-      .query<CategoryEntity>(
-        `INSERT INTO "Category" ("category_name") VALUES ($1) RETURNING *`,
-        [createCategoryDto.name],
-      )
-      .then((res) => Category.fromRow(res.rows[0]))
+    return this.repo.save(createCategoryDto)
   }
 
   public findAll(): Promise<Category[]> {
-    return this.pool
-      .query<CategoryEntity>(`SELECT * FROM "Category"`)
-      .then((res) => res.rows.map((row) => Category.fromRow(row)))
+    return this.repo.findAll()
   }
 
   public findOne(id: number): Promise<Category | null> {
-    return this.pool
-      .query<CategoryEntity>(
-        `SELECT * FROM "Category" WHERE "category_number" = $1`,
-        [id],
-      )
-      .then(
-        (res) =>
-          nullable(res.rows[0])
-            .map((row) => Category.fromRow(row))
-            .value() ?? null,
-      )
+    return this.repo
+      .findOne(id)
+      .then(throwIfNoValue(() => new NotFoundException("Category not found")))
   }
 
   public update(id: number, updateCategoryDto: UpdateCategoryDto) {
-    return { id, ...updateCategoryDto }
+    return this.repo.update(id, updateCategoryDto)
   }
 
   public remove(id: number) {
-    return this.pool
-      .query(`DELETE FROM "Category" WHERE "category_number" = $1`, [id])
-      .then((res) => ({
-        affected: res.rowCount,
-      }))
+    return this.repo.remove(id)
   }
 }
