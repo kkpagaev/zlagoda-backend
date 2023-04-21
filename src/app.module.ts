@@ -10,6 +10,7 @@ import { ProductModule } from "./product/product.module"
 import { StoreProductModule } from "./store-product/store-product.module"
 import { CustomerCardModule } from "./customer-card/customer-card.module"
 import { CheckModule } from "./check/check.module"
+import { SharedModule } from "./shared/shared.module"
 
 @Module({
   imports: [
@@ -24,6 +25,7 @@ import { CheckModule } from "./check/check.module"
     StoreProductModule,
     CustomerCardModule,
     CheckModule,
+    SharedModule,
   ],
   controllers: [AppController],
   providers: [AppService],
