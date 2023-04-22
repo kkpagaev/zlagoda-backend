@@ -12,7 +12,13 @@ async function bootstrap() {
   app.useGlobalPipes(new ValidationPipe())
   app.useGlobalInterceptors(new ClassSerializerInterceptor(app.get(Reflector)))
 
-  await app.listen(3000)
+  app.enableCors()
+
+  const PORT = process.env.APP_PORT ?? 8000
+
+  await app.listen(PORT)
+
+  console.log(`Server started on port ${PORT}`)
 }
 // eslint-disable-next-line @typescript-eslint/no-floating-promises
 bootstrap()
