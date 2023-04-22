@@ -13,8 +13,8 @@ import { UpdateEmployeeDto } from "./dto/update-employee.dto"
 import { ApiTags } from "@nestjs/swagger"
 import { Public } from "../auth/public.decorator"
 
-@Controller("employee")
-@ApiTags("employee")
+@ApiTags("Employee")
+@Controller("employees")
 export class EmployeeController {
   constructor(private readonly service: EmployeeService) {}
 

@@ -7,7 +7,7 @@ CREATE TABLE "Check" (
   "vat" DECIMAL(13, 4) NOT NULL,
   PRIMARY KEY ("check_number"),
   FOREIGN KEY("id_employee") 
-    REFERENCES "employee" ("id_employee") 
+    REFERENCES "Employee" ("id_employee") 
     ON DELETE NO ACTION 
     ON UPDATE CASCADE,
   FOREIGN KEY("card_number") 

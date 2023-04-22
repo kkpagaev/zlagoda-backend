@@ -10,18 +10,18 @@ export interface JwtPayload {
 @Injectable()
 export class AuthService {
   constructor(
-    private epmloyeeService: EmployeeService,
+    private employeeService: EmployeeService,
     private readonly jwtService: JwtService,
   ) {}
 
   async signIn(id: string, pass: string): Promise<any> {
     try {
-      const empl = await this.epmloyeeService.findOne(id)
+      const empl = await this.employeeService.findOne(id)
       if (!empl || !compareSync(pass, empl.password)) {
         throw new UnauthorizedException("Invalid credentials")
       }
 
-      const payload: JwtPayload = { id_employee: empl.id_employee }
+      const payload: JwtPayload = { id_employee: empl.id }
       const accessToken = await this.jwtService.signAsync(payload)
 
       return {

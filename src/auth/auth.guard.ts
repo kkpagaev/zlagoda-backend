@@ -8,7 +8,7 @@ import { ConfigService } from "@nestjs/config"
 import { Reflector } from "@nestjs/core"
 import { JwtService } from "@nestjs/jwt"
 import { Request } from "express"
-import { Role } from "../employee/entities/employee.entity"
+import { Role } from "../employee/entities/employee.model"
 import { EmployeeService } from "../employee/employee.service"
 import { JwtPayload } from "./auth.service"
 
