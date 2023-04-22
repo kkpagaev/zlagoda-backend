@@ -6,6 +6,8 @@ export const swagger = (app: any) => {
     .addBearerAuth(
       {
         type: "http",
+        scheme: "bearer",
+        bearerFormat: "JWT",
         in: "header",
         name: "jwt",
         description: "JWT Access Bearer Token",

@@ -10,7 +10,7 @@ import {
 import { EmployeeService } from "./employee.service"
 import { CreateEmployeeDto } from "./dto/create-employee.dto"
 import { UpdateEmployeeDto } from "./dto/update-employee.dto"
-import { ApiTags } from "@nestjs/swagger"
+import { ApiBearerAuth, ApiTags } from "@nestjs/swagger"
 import { Public } from "../auth/public.decorator"
 
 @ApiTags("Employee")
@@ -25,6 +25,7 @@ export class EmployeeController {
   }
 
   @Get()
+  @ApiBearerAuth("jwt")
   findAll() {
     return this.service.findAll()
   }

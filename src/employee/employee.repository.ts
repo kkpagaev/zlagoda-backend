@@ -20,7 +20,7 @@ export class EmployeeRepository {
     return this.pool
       .query<EmployeeEntity>(
         `INSERT INTO "Employee" 
-        ("id_employee", "empl_surname", "empl_name", "password", "empl_patronymic",
+        ("id_employee", "empl_surname", "empl_name","empl_patronymic", "password",
         "role", "salary", "date_of_birth", "date_of_start", 
         "phone_number", "city", "street", "zip_code")
         VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13) RETURNING *`,
@@ -28,9 +28,9 @@ export class EmployeeRepository {
           dto.id,
           dto.surname,
           dto.name,
+          dto.patronymic,
           dto.password,
           dto.role,
-          dto.patronymic,
           dto.salary,
           dto.birthDate,
           dto.startDate,

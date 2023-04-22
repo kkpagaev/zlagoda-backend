@@ -4,7 +4,7 @@ import { JwtService } from "@nestjs/jwt"
 import { EmployeeService } from "../employee/employee.service"
 
 export interface JwtPayload {
-  id_employee: string
+  sub: string
 }
 
 @Injectable()
@@ -14,14 +14,14 @@ export class AuthService {
     private readonly jwtService: JwtService,
   ) {}
 
-  async signIn(id: string, pass: string): Promise<any> {
+  public async signIn(id: string, pass: string): Promise<any> {
     try {
       const empl = await this.employeeService.findOne(id)
       if (!empl || !compareSync(pass, empl.password)) {
         throw new UnauthorizedException("Invalid credentials")
       }
 
-      const payload: JwtPayload = { id_employee: empl.id }
+      const payload: JwtPayload = { sub: empl.id }
       const accessToken = await this.jwtService.signAsync(payload)
 
       return {
