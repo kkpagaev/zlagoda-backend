@@ -55,13 +55,21 @@ export class ProductRepository {
     )
   }
 
-  public update(id: number, updateProductDto: UpdateProductDto) {
-    return { id, ...updateProductDto }
+  public update(id: number, dto: UpdateProductDto) {
+    return this.pool
+      .query<ProductEntity>(
+        `UPDATE "Product" 
+       SET "product_name" = $1, "characteristics" = $2, "category_number" = $3
+       WHERE "id_product" = $4
+       RETURNING *`,
+        [dto.name, dto.characteristics, dto.categoryNumber, id],
+      )
+      .then((res) => Product.fromRow(res.rows[0]))
   }
 
   public remove(id: number) {
     return this.pool
-      .query(`DELETE FROM "Product" WHERE "Product_number" = $1`, [id])
+      .query(`DELETE FROM "Product" WHERE "id_product" = $1`, [id])
       .then((res) => ({
         affected: res.rowCount,
       }))

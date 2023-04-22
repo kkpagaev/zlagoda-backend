@@ -11,7 +11,7 @@ import {
 import { ProductService } from "./product.service"
 import { CreateProductDto } from "./dto/create-product.dto"
 import { UpdateProductDto } from "./dto/update-product.dto"
-import { ApiTags } from "@nestjs/swagger"
+import { ApiBearerAuth, ApiTags } from "@nestjs/swagger"
 
 @ApiTags("Product")
 @Controller("products")
@@ -19,21 +19,25 @@ export class ProductController {
   constructor(private readonly productService: ProductService) {}
 
   @Post()
+  @ApiBearerAuth("jwt")
   public create(@Body() createProductDto: CreateProductDto) {
     return this.productService.save(createProductDto)
   }
 
   @Get()
+  @ApiBearerAuth("jwt")
   public findAll() {
     return this.productService.findAll()
   }
 
   @Get(":id")
+  @ApiBearerAuth("jwt")
   public findOne(@Param("id", ParseIntPipe) id: number) {
     return this.productService.findOne(id)
   }
 
   @Patch(":id")
+  @ApiBearerAuth("jwt")
   public update(
     @Param("id", ParseIntPipe) id: number,
     @Body() updateProductDto: UpdateProductDto,
@@ -42,6 +46,7 @@ export class ProductController {
   }
 
   @Delete(":id")
+  @ApiBearerAuth("jwt")
   public remove(@Param("id", ParseIntPipe) id: number) {
     return this.productService.remove(id)
   }
