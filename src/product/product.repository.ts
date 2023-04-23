@@ -42,6 +42,19 @@ export class ProductRepository {
       .then((res) => res.rows.map((row) => Product.fromRow(row, row)))
   }
 
+  public findAllByCategory(categoryNumber: number): Promise<Product[]> {
+    return this.pool
+      .query<ProductEntity & CategoryEntity>(
+        `SELECT p.*, c.* FROM "Product" AS p 
+        LEFT JOIN "Category" AS c 
+        ON c.category_number = p.category_number
+        WHERE c.category_number = $1
+        ORDER BY p.product_name`,
+        [categoryNumber],
+      )
+      .then((res) => res.rows.map((row) => Product.fromRow(row, row)))
+  }
+
   public findOne(id: number): Promise<Product | null> {
     return this.pool
       .query<ProductEntity & CategoryEntity>(

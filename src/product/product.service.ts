@@ -3,6 +3,7 @@ import { CreateProductDto } from "./dto/create-product.dto"
 import { UpdateProductDto } from "./dto/update-product.dto"
 import { Product } from "./entities/product.model"
 import { ProductRepository } from "./product.repository"
+import { ProductFilterQuery } from "./dto/product-filter-query.dto"
 
 @Injectable()
 export class ProductService {
@@ -12,7 +13,11 @@ export class ProductService {
     return this.productRepo.save(createDto)
   }
 
-  public findAll(): Promise<Product[]> {
+  public findAll(query: ProductFilterQuery): Promise<Product[]> {
+    if (query.categoryNumber) {
+      return this.productRepo.findAllByCategory(query.categoryNumber)
+    }
+
     return this.productRepo.findAll()
   }
 

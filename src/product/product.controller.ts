@@ -7,11 +7,13 @@ import {
   Param,
   Delete,
   ParseIntPipe,
+  Query,
 } from "@nestjs/common"
 import { ProductService } from "./product.service"
 import { CreateProductDto } from "./dto/create-product.dto"
 import { UpdateProductDto } from "./dto/update-product.dto"
 import { ApiBearerAuth, ApiTags } from "@nestjs/swagger"
+import { ProductFilterQuery } from "./dto/product-filter-query.dto"
 
 @ApiTags("Product")
 @Controller("products")
@@ -26,8 +28,8 @@ export class ProductController {
 
   @Get()
   @ApiBearerAuth("jwt")
-  public findAll() {
-    return this.productService.findAll()
+  public findAll(@Query() query: ProductFilterQuery) {
+    return this.productService.findAll(query)
   }
 
   @Get(":id")
