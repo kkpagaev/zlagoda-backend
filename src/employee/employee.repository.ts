@@ -4,7 +4,7 @@ import { UpdateEmployeeDto } from "./dto/update-employee.dto"
 import { EmployeeEntity } from "./entities/employee.entity"
 import { InjectDB } from "src/db/inject-db.decorator"
 import { Pool, QueryResult } from "pg"
-import { Employee } from "./entities/employee.model"
+import { Employee, Role } from "./entities/employee.model"
 import { throwIfNoValue } from "src/shared/utils/throw-if-no-value"
 import { buildWhereClause } from "src/shared/utils/build-where-clause"
 import { mapFirstRow } from "src/shared/utils/first-row"
@@ -45,7 +45,18 @@ export class EmployeeRepository {
 
   public findAll(): Promise<Employee[]> {
     return this.pool
-      .query<EmployeeEntity>(`SELECT * FROM "Employee"`)
+      .query<EmployeeEntity>(`SELECT * FROM "Employee" ORDER BY "empl_surname"`)
+      .then((res) => res.rows.map((row) => Employee.fromRow(row)))
+  }
+
+  public findAllByRole(role: Role): Promise<Employee[]> {
+    return this.pool
+      .query<EmployeeEntity>(
+        `SELECT * FROM "Employee"
+      WHERE "role" = $1
+      ORDER BY "empl_surname"`,
+        [role],
+      )
       .then((res) => res.rows.map((row) => Employee.fromRow(row)))
   }
 

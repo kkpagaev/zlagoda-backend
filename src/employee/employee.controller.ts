@@ -6,12 +6,14 @@ import {
   Patch,
   Param,
   Delete,
+  Query,
 } from "@nestjs/common"
 import { EmployeeService } from "./employee.service"
 import { CreateEmployeeDto } from "./dto/create-employee.dto"
 import { UpdateEmployeeDto } from "./dto/update-employee.dto"
 import { ApiBearerAuth, ApiTags } from "@nestjs/swagger"
 import { Public } from "../auth/public.decorator"
+import { EmployeeFilterQuery } from "./dto/filter-query.dto"
 
 @ApiTags("Employee")
 @Controller("employees")
@@ -20,28 +22,28 @@ export class EmployeeController {
 
   @Post()
   @Public()
-  create(@Body() dto: CreateEmployeeDto) {
+  public create(@Body() dto: CreateEmployeeDto) {
     return this.service.create(dto)
   }
 
   @Get()
   @ApiBearerAuth("jwt")
-  findAll() {
-    return this.service.findAll()
+  public findAll(@Query() query: EmployeeFilterQuery) {
+    return this.service.findAll(query)
   }
 
   @Get(":id")
-  findOne(@Param("id") id: string) {
+  public findOne(@Param("id") id: string) {
     return this.service.findOne(id)
   }
 
   @Patch(":id")
-  update(@Param("id") id: string, @Body() dto: UpdateEmployeeDto) {
+  public update(@Param("id") id: string, @Body() dto: UpdateEmployeeDto) {
     return this.service.update(id, dto)
   }
 
   @Delete(":id")
-  remove(@Param("id") id: string) {
+  public remove(@Param("id") id: string) {
     return this.service.remove(id)
   }
 }

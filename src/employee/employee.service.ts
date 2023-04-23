@@ -4,6 +4,7 @@ import { UpdateEmployeeDto } from "./dto/update-employee.dto"
 import { hash } from "bcrypt"
 import { Role } from "./entities/employee.model"
 import { EmployeeRepository } from "./employee.repository"
+import { EmployeeFilterQuery } from "./dto/filter-query.dto"
 
 const BCRYPT_SALT_ROUNDS = 12
 
@@ -23,7 +24,11 @@ export class EmployeeService {
     return this.repo.save({ ...dto, password: hashedPassword })
   }
 
-  public findAll() {
+  public findAll(query: EmployeeFilterQuery) {
+    if (query.role) {
+      return this.repo.findAllByRole(query.role)
+    }
+
     return this.repo.findAll()
   }
 
