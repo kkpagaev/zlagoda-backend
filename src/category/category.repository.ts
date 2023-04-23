@@ -25,7 +25,10 @@ export class CategoryRepository {
 
   public findAll(): Promise<Category[]> {
     return this.pool
-      .query<CategoryEntity>(`SELECT * FROM "Category"`)
+      .query<CategoryEntity>(
+        `SELECT * FROM "Category"
+      ORDER BY category_name`,
+      )
       .then((res) => res.rows.map((row) => Category.fromRow(row)))
   }
 
