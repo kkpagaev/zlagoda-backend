@@ -90,8 +90,38 @@ export class EmployeeRepository {
     )
   }
 
-  public update(id: string, updateEmployeeDto: UpdateEmployeeDto) {
-    return { id_employee: id, ...updateEmployeeDto }
+  public update(id: string, dto: UpdateEmployeeDto): Promise<Employee> {
+    return this.pool
+      .query<EmployeeEntity>(
+        `UPDATE "Employee"
+         SET "empl_surname" = $2,
+             "empl_name" = $3,
+             "empl_patronymic" = $4,
+             "role" = $5,
+             "salary" = $6,
+             "date_of_birth" = $7,
+             "date_of_start" = $8,
+             "phone_number" = $9,
+             "city" = $10,
+             "street" = $11,
+             "zip_code" = $12
+         WHERE "id_employee" = $1 RETURNING *`,
+        [
+          id,
+          dto.surname,
+          dto.name,
+          dto.patronymic,
+          dto.role,
+          dto.salary,
+          dto.birthDate,
+          dto.startDate,
+          dto.phoneNumber,
+          dto.city,
+          dto.street,
+          dto.zipCode,
+        ],
+      )
+      .then((res) => Employee.fromRow(res.rows[0]))
   }
 
   public remove(id: string) {
