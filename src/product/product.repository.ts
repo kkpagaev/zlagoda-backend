@@ -7,6 +7,7 @@ import { Pool } from "pg"
 import { Product } from "./entities/product.model"
 import { nullable } from "pratica"
 import { throwIfNoValue } from "src/shared/utils/throw-if-no-value"
+import { CategoryEntity } from "src/category/entities/category.entity"
 
 @Injectable()
 export class ProductRepository {
@@ -32,19 +33,26 @@ export class ProductRepository {
 
   public findAll(): Promise<Product[]> {
     return this.pool
-      .query<ProductEntity>(`SELECT * FROM "Product"`)
-      .then((res) => res.rows.map((row) => Product.fromRow(row)))
+      .query<ProductEntity & CategoryEntity>(
+        `SELECT p.*, c.* FROM "Product" AS p 
+        LEFT JOIN "Category" AS c ON c.category_number = p.category_number`,
+      )
+      .then((res) => res.rows.map((row) => Product.fromRow(row, row)))
   }
 
   public findOne(id: number): Promise<Product | null> {
     return this.pool
-      .query<ProductEntity>(`SELECT * FROM "Product" WHERE "id_product" = $1`, [
-        id,
-      ])
+      .query<ProductEntity & CategoryEntity>(
+        `SELECT p.*, c.*FROM "Product" AS p 
+        LEFT JOIN "Category" AS c 
+        ON c.category_number = p.category_number
+        WHERE "id_product" = $1`,
+        [id],
+      )
       .then(
         (res) =>
           nullable(res.rows[0])
-            .map((row) => Product.fromRow(row))
+            .map((row) => Product.fromRow(row, row))
             .value() ?? null,
       )
   }
