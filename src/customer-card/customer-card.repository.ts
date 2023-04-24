@@ -45,7 +45,10 @@ export class CustomerCardRepository {
 
   public findAll(): Promise<CustomerCard[]> {
     return this.pool
-      .query<CustomerCardEntity>(`SELECT * FROM "Customer_Card"`)
+      .query<CustomerCardEntity>(
+        `SELECT * FROM "Customer_Card"
+        ORDER BY "cust_surname"`,
+      )
       .then((res) => res.rows.map((row) => CustomerCard.fromRow(row)))
   }
 
@@ -69,8 +72,35 @@ export class CustomerCardRepository {
     )
   }
 
-  public update(cardNumber: string, updateProductDto: UpdateCustomerCardDto) {
-    return { cardNumber, ...updateProductDto }
+  public update(
+    cardNumber: string,
+    dto: UpdateCustomerCardDto,
+  ): Promise<CustomerCard> {
+    return this.pool
+      .query<CustomerCardEntity>(
+        `UPDATE "Customer_Card"
+         SET "cust_surname" = $2,
+             "cust_name" = $3,
+             "cust_patronymic" = $4,
+             "phone_number" = $5,
+             "city" = $6,
+             "street" = $7,
+             "zip_code" = $8,
+             "percent" = $9
+         WHERE "card_number" = $1 RETURNING *`,
+        [
+          cardNumber,
+          dto.customer.surname,
+          dto.customer.name,
+          dto.customer.patronymic,
+          dto.phoneNumber,
+          dto.address.city,
+          dto.address.street,
+          dto.address.zipCode,
+          dto.percent,
+        ],
+      )
+      .then((res) => CustomerCard.fromRow(res.rows[0]))
   }
 
   public remove(cardNumber: string) {
