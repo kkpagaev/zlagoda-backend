@@ -26,7 +26,8 @@ export class StoreProductRepository {
     return this.pool
       .query<StoreProductEntity>(
         `INSERT INTO "Store_Product" 
-        ("UPC","UPC_prom","id_product","selling_price","products_number","promotional_product") 
+        ("UPC","UPC_prom","id_product","selling_price",
+        "products_number","promotional_product") 
         VALUES ($1, $2, $3, $4, $5, $6) RETURNING *`,
         [
           upc,
@@ -42,7 +43,10 @@ export class StoreProductRepository {
 
   public findAll(): Promise<StoreProduct[]> {
     return this.pool
-      .query<StoreProductEntity>(`SELECT * FROM "Store_Product"`)
+      .query<StoreProductEntity>(
+        `SELECT * FROM "Store_Product"
+        ORDER BY "UPC"`,
+      )
       .then((res) => res.rows.map((row) => StoreProduct.fromRow(row)))
   }
 
@@ -66,8 +70,30 @@ export class StoreProductRepository {
     )
   }
 
-  public update(upc: string, updateProductDto: UpdateStoreProductDto) {
-    return { id: upc, ...updateProductDto }
+  public update(
+    upc: string,
+    dto: UpdateStoreProductDto,
+  ): Promise<StoreProduct> {
+    return this.pool
+      .query<StoreProductEntity>(
+        `UPDATE "Store_Product"
+         SET "UPC_prom" = $2,
+             "id_product" = $3,
+             "selling_price" = $4,
+             "products_number" = $5,
+             "promotional_product" = $6
+         WHERE "UPC" = $1 
+         RETURNING *`,
+        [
+          upc,
+          dto.upcProm,
+          dto.productId,
+          dto.sellingPrice,
+          dto.numberOfProducts,
+          dto.isPromotional,
+        ],
+      )
+      .then((res) => StoreProduct.fromRow(res.rows[0]))
   }
 
   public remove(upc: string) {
