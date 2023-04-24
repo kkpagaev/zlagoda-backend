@@ -18,7 +18,7 @@ export class StoreProductService {
 
   public findOne(upc: string) {
     return this.repo
-      .findOne(upc)
+      .findOneWithProductInfo(upc)
       .then(
         throwIfNoValue(() => new NotFoundException("Store Product not found")),
       )

@@ -10,7 +10,7 @@ import {
 import { StoreProductService } from "./store-product.service"
 import { CreateStoreProductDto } from "./dto/create-store-product.dto"
 import { UpdateStoreProductDto } from "./dto/update-store-product.dto"
-import { ApiTags } from "@nestjs/swagger"
+import { ApiBearerAuth, ApiTags } from "@nestjs/swagger"
 
 @ApiTags("StoreProduct")
 @Controller("store-products")
@@ -27,6 +27,7 @@ export class StoreProductController {
     return this.storeProductService.findAll()
   }
 
+  @ApiBearerAuth("jwt")
   @Get(":upc")
   public findOne(@Param("upc") upc: string) {
     return this.storeProductService.findOne(upc)

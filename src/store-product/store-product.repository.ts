@@ -7,6 +7,7 @@ import { Pool } from "pg"
 import { StoreProduct } from "./entities/store-product.model"
 import { nullable } from "pratica"
 import { throwIfNoValue } from "src/shared/utils/throw-if-no-value"
+import { ProductEntity } from "src/product/entities/product.entity"
 
 @Injectable()
 export class StoreProductRepository {
@@ -60,6 +61,23 @@ export class StoreProductRepository {
         (res) =>
           nullable(res.rows[0])
             .map((row) => StoreProduct.fromRow(row))
+            .value() ?? null,
+      )
+  }
+
+  public findOneWithProductInfo(upc: string): Promise<StoreProduct | null> {
+    return this.pool
+      .query<StoreProductEntity & ProductEntity>(
+        `SELECT sp.*, p.* FROM "Store_Product" AS sp
+        LEFT JOIN "Product" AS p
+        ON p.id_product = sp.id_product
+        WHERE "UPC" = $1`,
+        [upc],
+      )
+      .then(
+        (res) =>
+          nullable(res.rows[0])
+            .map((row) => StoreProduct.fromRow(row, row))
             .value() ?? null,
       )
   }
