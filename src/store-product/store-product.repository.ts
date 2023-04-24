@@ -51,6 +51,15 @@ export class StoreProductRepository {
       .then((res) => res.rows.map((row) => StoreProduct.fromRow(row)))
   }
 
+  public findAllSortByProductNumber(): Promise<StoreProduct[]> {
+    return this.pool
+      .query<StoreProductEntity>(
+        `SELECT * FROM "Store_Product"
+        ORDER BY "products_number"`,
+      )
+      .then((res) => res.rows.map((row) => StoreProduct.fromRow(row)))
+  }
+
   public findOne(upc: string): Promise<StoreProduct | null> {
     return this.pool
       .query<StoreProductEntity>(

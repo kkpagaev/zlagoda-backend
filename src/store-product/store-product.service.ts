@@ -13,7 +13,7 @@ export class StoreProductService {
   }
 
   public findAll() {
-    return this.repo.findAll()
+    return this.repo.findAllSortByProductNumber()
   }
 
   public findOne(upc: string) {
