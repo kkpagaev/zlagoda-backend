@@ -60,6 +60,16 @@ export class EmployeeRepository {
       .then((res) => res.rows.map((row) => Employee.fromRow(row)))
   }
 
+  public findOneBySurname(surname: string): Promise<Employee | null> {
+    return this.pool
+      .query(
+        `SELECT * FROM "Employee"
+        WHERE "empl_surname" = $1`,
+        [surname],
+      )
+      .then(mapFirstRow(Employee.fromRow))
+  }
+
   public findBy(where: Partial<EmployeeEntity>): Promise<Employee[]> {
     return this.findByRaw(where).then((res) => res.rows.map(Employee.fromRow))
   }

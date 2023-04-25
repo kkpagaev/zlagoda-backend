@@ -14,6 +14,7 @@ import { UpdateEmployeeDto } from "./dto/update-employee.dto"
 import { ApiBearerAuth, ApiTags } from "@nestjs/swagger"
 import { Public } from "../auth/public.decorator"
 import { EmployeeFilterQuery } from "./dto/filter-query.dto"
+import { EmployeeSearchQuery } from "./dto/employee-search-query.dto"
 
 @ApiTags("Employee")
 @Controller("employees")
@@ -30,6 +31,11 @@ export class EmployeeController {
   @ApiBearerAuth("jwt")
   public findAll(@Query() query: EmployeeFilterQuery) {
     return this.service.findAll(query)
+  }
+
+  @Get("/search")
+  public findOneBySurname(@Query() query: EmployeeSearchQuery) {
+    return this.service.findOneBySurname(query.surname)
   }
 
   @Get(":id")

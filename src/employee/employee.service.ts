@@ -1,10 +1,11 @@
-import { Injectable } from "@nestjs/common"
+import { Injectable, NotFoundException } from "@nestjs/common"
 import { CreateEmployeeDto } from "./dto/create-employee.dto"
 import { UpdateEmployeeDto } from "./dto/update-employee.dto"
 import { hash } from "bcrypt"
 import { Role } from "./entities/employee.model"
 import { EmployeeRepository } from "./employee.repository"
 import { EmployeeFilterQuery } from "./dto/filter-query.dto"
+import { throwIfNoValue } from "src/shared/utils/throw-if-no-value"
 
 const BCRYPT_SALT_ROUNDS = 12
 
@@ -36,6 +37,16 @@ export class EmployeeService {
     return this.repo.findOneOrFail(id)
   }
 
+  public findOneBySurname(surname: string) {
+    return this.repo
+      .findOneBySurname(surname)
+      .then(
+        throwIfNoValue(
+          () => new NotFoundException("Employee with given surname not found"),
+        ),
+      )
+  }
+
   public findOneWithRole(id: string, role: Role) {
     return this.repo.findOneByOrFail({
       id_employee: id,
@@ -49,9 +60,5 @@ export class EmployeeService {
 
   public remove(id: string) {
     return this.repo.remove(id)
-  }
-
-  public findBySurname(surname: string) {
-    return this.repo.findOneByOrFail({ empl_surname: surname })
   }
 }
