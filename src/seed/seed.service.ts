@@ -10,6 +10,7 @@ import { StoreProductService } from "src/store-product/store-product.service"
 import { faker } from "@faker-js/faker"
 import { ProductService } from "src/product/product.service"
 import { CreateCategoryDto } from "src/category/dto/create-category.dto"
+import { CreateProductDto } from "src/product/dto/create-product.dto"
 
 @Injectable()
 export class SeedService {
@@ -28,20 +29,34 @@ export class SeedService {
     }
 
     for (let i = 0; i < 100; i++) {
-      this.seedCategory()
+      this.seedProduct()
     }
   }
 
-  async seedCategory() {
+  async seedProduct() {
     const dto = this.createCategoryDto()
     console.log(`creating category name: ${dto.name}`)
     const category = await this.categoryService.create(dto)
+
+    for (let i = 0; i < 10; i++) {
+      const productDto = this.createProductDto(category.number)
+      console.log(`creating product name: ${productDto.name}`)
+      const product = await this.productService.save(productDto)
+    }
   }
 
   async seedEmployee() {
     const dto = this.createEmployeeDto()
     console.log(`creating employee id: ${dto.id}`)
     const employee = await this.employeeService.create(dto)
+  }
+
+  createProductDto(category: number): CreateProductDto {
+    return {
+      name: faker.commerce.productName(),
+      characteristics: faker.commerce.productDescription().substring(0, 80),
+      categoryNumber: category,
+    }
   }
 
   createEmployeeDto(): CreateEmployeeDto {
