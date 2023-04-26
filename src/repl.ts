@@ -2,7 +2,12 @@ import { repl } from "@nestjs/core"
 import { AppModule } from "./app.module"
 
 async function bootstrap() {
-  await repl(AppModule)
+  const replServer = await repl(AppModule)
+  replServer.setupHistory(".repl_history", (err) => {
+    if (err) {
+      console.error(err)
+    }
+  })
 }
 // eslint-disable-next-line @typescript-eslint/no-floating-promises
 bootstrap()
