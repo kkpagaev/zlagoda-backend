@@ -13,6 +13,7 @@ import { CreateCategoryDto } from "src/category/dto/create-category.dto"
 import { CreateProductDto } from "src/product/dto/create-product.dto"
 import { CreateStoreProductDto } from "src/store-product/dto/create-store-product.dto"
 import { CreateCustomerCardDto } from "src/customer-card/dto/create-customer-card.dto"
+import { CreateCheckDto } from "src/check/dto/create-check.dto"
 
 @Injectable()
 export class SeedService {
@@ -25,17 +26,35 @@ export class SeedService {
     private employeeService: EmployeeService,
   ) {}
 
-  seed() {
-    for (let i = 0; i < 100; i++) {
-      this.seedEmployee()
-    }
-
+  async seed() {
     for (let i = 0; i < 100; i++) {
       this.seedProduct()
     }
 
-    for (let i = 0; i < 200; i++) {
-      this.seedCustomerCard()
+    for (let i = 0; i < 100; i++) {
+      const employee = await this.seedEmployee()
+
+      const card = await this.seedCustomerCard()
+
+      this.seedCheck(employee.id, card.cardNumber)
+    }
+  }
+
+  async seedCheck(employee: string, card: string) {
+    const dto = this.createCheckDto(employee, card)
+    console.log(`creating check number: ${dto.checkNumber}`)
+    const check = await this.checkRepository.save(dto)
+    return check
+  }
+
+  createCheckDto(employee: string, card: string): CreateCheckDto {
+    return {
+      employeeId: employee,
+      cardNumber: card,
+      checkNumber: faker.datatype.number(1000000).toString(),
+      sumTotal: faker.datatype.number(100000),
+      printDate: faker.date.past().toISOString().split("T")[0],
+      valueAddedTax: faker.datatype.number(100),
     }
   }
 
@@ -43,6 +62,7 @@ export class SeedService {
     const dto = this.createCustomerCardDto()
     console.log(`creating customer card number: ${dto.cardNumber}`)
     const customerCard = await this.customerCardService.create(dto)
+    return customerCard
   }
 
   createCustomerCardDto(): CreateCustomerCardDto {
@@ -55,7 +75,7 @@ export class SeedService {
       address: {
         city: faker.address.city(),
         street: faker.address.street(),
-        zipCode: faker.address.zipCode(),
+        zipCode: faker.address.zipCode().substring(0, 5),
       },
       percent: faker.datatype.number(100),
       cardNumber: faker.datatype.number(1000000).toString(),
@@ -77,6 +97,7 @@ export class SeedService {
       const storeProduct = await this.storeProductService.create(
         storeProductDto,
       )
+      return storeProduct
     }
   }
 
@@ -84,6 +105,7 @@ export class SeedService {
     const dto = this.createEmployeeDto()
     console.log(`creating employee id: ${dto.id}`)
     const employee = await this.employeeService.create(dto)
+    return employee
   }
 
   createProductDto(category: number): CreateProductDto {
