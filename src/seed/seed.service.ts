@@ -12,6 +12,7 @@ import { ProductService } from "src/product/product.service"
 import { CreateCategoryDto } from "src/category/dto/create-category.dto"
 import { CreateProductDto } from "src/product/dto/create-product.dto"
 import { CreateStoreProductDto } from "src/store-product/dto/create-store-product.dto"
+import { CreateCustomerCardDto } from "src/customer-card/dto/create-customer-card.dto"
 
 @Injectable()
 export class SeedService {
@@ -31,6 +32,34 @@ export class SeedService {
 
     for (let i = 0; i < 100; i++) {
       this.seedProduct()
+    }
+
+    for (let i = 0; i < 200; i++) {
+      this.seedCustomerCard()
+    }
+  }
+
+  async seedCustomerCard() {
+    const dto = this.createCustomerCardDto()
+    console.log(`creating customer card number: ${dto.cardNumber}`)
+    const customerCard = await this.customerCardService.create(dto)
+  }
+
+  createCustomerCardDto(): CreateCustomerCardDto {
+    return {
+      customer: {
+        name: faker.name.firstName(),
+        surname: faker.name.lastName(),
+        patronymic: faker.name.middleName(),
+      },
+      address: {
+        city: faker.address.city(),
+        street: faker.address.street(),
+        zipCode: faker.address.zipCode(),
+      },
+      percent: faker.datatype.number(100),
+      cardNumber: faker.datatype.number(1000000).toString(),
+      phoneNumber: faker.phone.number().substring(0, 10),
     }
   }
 
