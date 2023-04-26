@@ -11,6 +11,7 @@ import { faker } from "@faker-js/faker"
 import { ProductService } from "src/product/product.service"
 import { CreateCategoryDto } from "src/category/dto/create-category.dto"
 import { CreateProductDto } from "src/product/dto/create-product.dto"
+import { CreateStoreProductDto } from "src/store-product/dto/create-store-product.dto"
 
 @Injectable()
 export class SeedService {
@@ -42,6 +43,11 @@ export class SeedService {
       const productDto = this.createProductDto(category.number)
       console.log(`creating product name: ${productDto.name}`)
       const product = await this.productService.save(productDto)
+      const storeProductDto = this.createStoreProductDto(product.id)
+      console.log(`creating store product upc: ${storeProductDto.upc}`)
+      const storeProduct = await this.storeProductService.create(
+        storeProductDto,
+      )
     }
   }
 
@@ -56,6 +62,19 @@ export class SeedService {
       name: faker.commerce.productName(),
       characteristics: faker.commerce.productDescription().substring(0, 80),
       categoryNumber: category,
+    }
+  }
+
+  createStoreProductDto(product: number): CreateStoreProductDto {
+    return {
+      upc: faker.datatype.number(1000000).toString(),
+      productId: product,
+      numberOfProducts: faker.datatype.number(100),
+      sellingPrice: faker.datatype.number({
+        min: 100,
+        max: 1000,
+      }),
+      isPromotional: faker.datatype.boolean(),
     }
   }
 
