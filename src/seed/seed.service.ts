@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-floating-promises */
 import { Injectable } from "@nestjs/common"
 import { CategoryService } from "src/category/category.service"
 import { CheckRepository } from "src/check/check.repository"
@@ -8,6 +9,7 @@ import { Role } from "src/employee/entities/employee.model"
 import { StoreProductService } from "src/store-product/store-product.service"
 import { faker } from "@faker-js/faker"
 import { ProductService } from "src/product/product.service"
+import { CreateCategoryDto } from "src/category/dto/create-category.dto"
 
 @Injectable()
 export class SeedService {
@@ -20,10 +22,20 @@ export class SeedService {
     private employeeService: EmployeeService,
   ) {}
 
-  async seed() {
+  seed() {
     for (let i = 0; i < 100; i++) {
-      await this.seedEmployee()
+      this.seedEmployee()
     }
+
+    for (let i = 0; i < 100; i++) {
+      this.seedCategory()
+    }
+  }
+
+  async seedCategory() {
+    const dto = this.createCategoryDto()
+    console.log(`creating category name: ${dto.name}`)
+    const category = await this.categoryService.create(dto)
   }
 
   async seedEmployee() {
@@ -50,6 +62,12 @@ export class SeedService {
       birthDate: faker.date.past().toISOString().split("T")[0],
       startDate: faker.date.past().toISOString().split("T")[0],
       phoneNumber: faker.phone.number().substring(0, 10),
+    }
+  }
+
+  createCategoryDto(): CreateCategoryDto {
+    return {
+      name: faker.commerce.department(),
     }
   }
 }
