@@ -8,5 +8,6 @@ import { ProductRepository } from "./product.repository"
   imports: [DbModule],
   controllers: [ProductController],
   providers: [ProductService, ProductRepository],
+  exports: [ProductService],
 })
 export class ProductModule {}

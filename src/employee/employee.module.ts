@@ -8,6 +8,6 @@ import { EmployeeRepository } from "./employee.repository"
   imports: [DbModule],
   controllers: [EmployeeController],
   providers: [EmployeeService, EmployeeRepository],
-  exports: [EmployeeService],
+  exports: [EmployeeService, EmployeeRepository],
 })
 export class EmployeeModule {}

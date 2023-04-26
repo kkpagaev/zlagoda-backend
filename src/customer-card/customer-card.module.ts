@@ -8,5 +8,6 @@ import { CustomerCardRepository } from "./customer-card.repository"
   imports: [DbModule],
   controllers: [CustomerCardController],
   providers: [CustomerCardService, CustomerCardRepository],
+  exports: [CustomerCardService, CustomerCardRepository],
 })
 export class CustomerCardModule {}

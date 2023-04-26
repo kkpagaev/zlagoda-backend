@@ -8,5 +8,6 @@ import { CheckRepository } from "./check.repository"
   imports: [DbModule],
   controllers: [CheckController],
   providers: [CheckService, CheckRepository],
+  exports: [CheckService, CheckRepository],
 })
 export class CheckModule {}
