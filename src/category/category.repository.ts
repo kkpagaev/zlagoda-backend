@@ -47,7 +47,12 @@ export class CategoryRepository {
   }
 
   public update(id: number, updateCategoryDto: UpdateCategoryDto) {
-    return { id, ...updateCategoryDto }
+    return this.pool
+      .query<CategoryEntity>(
+        `UPDATE "Category" SET "category_name" = $1 WHERE "category_number" = $2 RETURNING *`,
+        [updateCategoryDto.name, id],
+      )
+      .then((res) => Category.fromRow(res.rows[0]))
   }
 
   public remove(id: number) {
