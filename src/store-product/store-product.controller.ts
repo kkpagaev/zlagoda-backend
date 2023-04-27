@@ -6,11 +6,13 @@ import {
   Patch,
   Param,
   Delete,
+  Query,
 } from "@nestjs/common"
 import { StoreProductService } from "./store-product.service"
 import { CreateStoreProductDto } from "./dto/create-store-product.dto"
 import { UpdateStoreProductDto } from "./dto/update-store-product.dto"
 import { ApiBearerAuth, ApiTags } from "@nestjs/swagger"
+import { StoreProductQuery } from "./dto/prom-store-product-query.dto"
 
 @ApiTags("StoreProduct")
 @Controller("store-products")
@@ -25,6 +27,12 @@ export class StoreProductController {
   @Get()
   public findAll() {
     return this.storeProductService.findAll()
+  }
+
+  @Get("filter")
+  @ApiBearerAuth("jwt")
+  public findAllFiltered(@Query() filter: StoreProductQuery) {
+    return this.storeProductService.findAllFiltered(filter)
   }
 
   @ApiBearerAuth("jwt")

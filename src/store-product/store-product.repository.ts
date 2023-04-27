@@ -163,7 +163,7 @@ export class StoreProductRepository {
           `SELECT sp.*, p.* FROM "Store_Product" AS sp
         LEFT JOIN "Product" AS p
         ON p.id_product = sp.id_product
-        WHERE sp.promotional_product = $1
+        WHERE sp.promotional_product = $1::boolean
         ORDER BY sp.products_number
         DESC`,
           [isPromotional],
@@ -175,7 +175,7 @@ export class StoreProductRepository {
           `SELECT sp.*, p.* FROM "Store_Product" AS sp
         LEFT JOIN "Product" AS p
         ON p.id_product = sp.id_product
-        WHERE sp.promotional_product = true
+        WHERE sp.promotional_product = $1::boolean
         ORDER BY p.product_name
         ASC`,
           [isPromotional],

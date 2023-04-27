@@ -3,6 +3,7 @@ import { CreateStoreProductDto } from "./dto/create-store-product.dto"
 import { UpdateStoreProductDto } from "./dto/update-store-product.dto"
 import { StoreProductRepository } from "./store-product.repository"
 import { throwIfNoValue } from "src/shared/utils/throw-if-no-value"
+import { StoreProductQuery } from "./dto/prom-store-product-query.dto"
 
 @Injectable()
 export class StoreProductService {
@@ -34,5 +35,9 @@ export class StoreProductService {
 
   getRandom() {
     return this.repo.getRandom()
+  }
+
+  findAllFiltered(filter: StoreProductQuery) {
+    return this.repo.filterProducts(filter)
   }
 }

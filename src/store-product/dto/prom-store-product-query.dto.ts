@@ -1,5 +1,5 @@
 import { ApiProperty } from "@nestjs/swagger"
-import { Type } from "class-transformer"
+import { Transform, Type } from "class-transformer"
 import { IsBoolean, IsIn, IsOptional } from "class-validator"
 
 enum PromStoreProductOrderBy {
@@ -9,12 +9,17 @@ enum PromStoreProductOrderBy {
 export class StoreProductQuery {
   @IsIn(Object.values(PromStoreProductOrderBy))
   @IsOptional()
-  @ApiProperty()
+  @ApiProperty({
+    enum: PromStoreProductOrderBy,
+    default: PromStoreProductOrderBy.name,
+  })
   orderBy: PromStoreProductOrderBy = PromStoreProductOrderBy.name
 
   @IsBoolean()
   @IsOptional()
-  @ApiProperty()
-  @Type(() => Boolean)
-  isPromotional = true
+  @ApiProperty({})
+  @Transform(({ value }) => {
+    return value === "true"
+  })
+  isPromotional: boolean
 }
