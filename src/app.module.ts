@@ -11,7 +11,8 @@ import { StoreProductModule } from "./store-product/store-product.module"
 import { CustomerCardModule } from "./customer-card/customer-card.module"
 import { CheckModule } from "./check/check.module"
 import { SharedModule } from "./shared/shared.module"
-import { SeedModule } from './seed/seed.module';
+import { SeedModule } from "./seed/seed.module"
+import { SaleModule } from "./sale/sale.module"
 
 @Module({
   imports: [
@@ -28,6 +29,7 @@ import { SeedModule } from './seed/seed.module';
     CheckModule,
     SharedModule,
     SeedModule,
+    SaleModule,
   ],
   controllers: [AppController],
   providers: [AppService],

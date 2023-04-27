@@ -1,3 +1,4 @@
+import { Sale } from "src/sale/entities/sale.model"
 import { CheckEntity } from "./check.entity"
 
 export class Check {
@@ -12,6 +13,8 @@ export class Check {
   sumTotal: number
 
   valueAddedTax: number
+
+  sales?: Sale[]
 
   constructor(partial?: Partial<Check>) {
     if (partial) {

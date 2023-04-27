@@ -1,5 +1,7 @@
 import { ApiProperty } from "@nestjs/swagger"
+import { Type } from "class-transformer"
 import { IsISO8601, IsNotEmpty, IsNumber, IsOptional } from "class-validator"
+import { CreateSaleDto } from "src/sale/dto/create-sale.dto"
 
 export class CreateCheckDto {
   @IsNotEmpty()
@@ -27,4 +29,10 @@ export class CreateCheckDto {
   @IsNumber()
   @ApiProperty()
   valueAddedTax: number
+
+  @ApiProperty({
+    type: [CreateSaleDto],
+  })
+  @Type(() => CreateSaleDto)
+  sales: CreateSaleDto[]
 }

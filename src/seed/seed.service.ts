@@ -55,6 +55,7 @@ export class SeedService {
       sumTotal: faker.datatype.number(100000),
       printDate: faker.date.past().toISOString().split("T")[0],
       valueAddedTax: faker.datatype.number(100),
+      sales: [],
     }
   }
 
