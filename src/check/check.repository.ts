@@ -1,6 +1,5 @@
 import { Injectable, NotFoundException } from "@nestjs/common"
 import { CreateCheckDto } from "./dto/create-check.dto"
-import { UpdateCheckDto } from "./dto/update-check.dto"
 import { CheckEntity } from "./entities/check.entity"
 import { InjectDB } from "src/db/inject-db.decorator"
 import { Pool } from "pg"
@@ -56,10 +55,6 @@ export class CheckRepository {
     return this.findOne(checkNumber).then(
       throwIfNoValue(() => new NotFoundException("Check not found")),
     )
-  }
-
-  public update(checkNumber: string, updateCheckDto: UpdateCheckDto) {
-    return { checkNumber, ...updateCheckDto }
   }
 
   public remove(checkNumber: string) {

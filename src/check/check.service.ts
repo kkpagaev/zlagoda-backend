@@ -1,6 +1,5 @@
 import { Injectable } from "@nestjs/common"
 import { CreateCheckDto } from "./dto/create-check.dto"
-import { UpdateCheckDto } from "./dto/update-check.dto"
 import { CheckRepository } from "./check.repository"
 import { SaleRepository } from "src/sale/sale.repository"
 
@@ -36,10 +35,6 @@ export class CheckService {
 
   public findOne(checkNumber: string) {
     return this.checkRepo.findOneOrFail(checkNumber)
-  }
-
-  public update(checkNumber: string, updateCheckDto: UpdateCheckDto) {
-    return this.checkRepo.update(checkNumber, updateCheckDto)
   }
 
   public remove(checkNumber: string) {
