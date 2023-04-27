@@ -8,33 +8,27 @@ import { SaleService } from "./sale.service"
 export class SaleController {
   constructor(private readonly saleService: SaleService) {}
 
-  @Get("employee/:id")
+  @Get("revenue")
   @ApiBearerAuth("jwt")
-  public findAllForEmployee(
+  public getTotalRevenue(@Query() dateQuery: DateQuery) {
+    return this.saleService.getTotalRevenue(dateQuery)
+  }
+
+  @Get("revenue/:id")
+  @ApiBearerAuth("jwt")
+  public getTotalRevenueByCashier(
     @Param("id") employeeId: string,
     @Query() dateQuery: DateQuery,
   ) {
-    return this.saleService.getSumOfSoldProductsByCashierId({
-      employeeId: +employeeId,
-      dateQuery,
-    })
+    return this.saleService.getTotalRevenueByCashier(employeeId, dateQuery)
   }
 
-  @Get("product/:id")
+  @Get("/sold-products/:upc")
   @ApiBearerAuth("jwt")
-  public findAllForProduct(
-    @Param("id") productId: string,
+  public countSoldProductsByUpc(
+    @Param("upc") upc: string,
     @Query() dateQuery: DateQuery,
   ) {
-    return this.saleService.getSumOfSoldProductByProductNumber(
-      +productId,
-      dateQuery,
-    )
-  }
-
-  @Get()
-  @ApiBearerAuth("jwt")
-  public findAll(@Query() dateQuery: DateQuery) {
-    return this.saleService.getSumOfSoldProductsByAllCashiers(dateQuery)
+    return this.saleService.countSoldProductsByUpc(upc, dateQuery)
   }
 }

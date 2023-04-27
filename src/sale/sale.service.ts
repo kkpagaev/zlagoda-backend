@@ -28,33 +28,21 @@ export class SaleService {
     return this.repo.remove(checkNumber)
   }
 
-  getSumOfSoldProductsByCashierId({
-    employeeId,
-    dateQuery,
-  }: {
-    employeeId: number
-    dateQuery: DateQuery
-  }) {
-    return this.repo.getSumOfSoldProductsByCashierId(
+  public getTotalRevenue(dateQuery: DateQuery) {
+    return this.repo.getTotalRevenue(dateQuery.startDate, dateQuery.endDate)
+  }
+
+  public getTotalRevenueByCashier(employeeId: string, dateQuery: DateQuery) {
+    return this.repo.getTotalRevenueByCashier(
       employeeId,
       dateQuery.startDate,
       dateQuery.endDate,
     )
   }
 
-  getSumOfSoldProductByProductNumber(
-    employeeId: number,
-    { startDate, endDate }: DateQuery,
-  ) {
-    return this.repo.getSumOfSoldProductByProductNumber(
-      employeeId,
-      startDate,
-      endDate,
-    )
-  }
-
-  getSumOfSoldProductsByAllCashiers(dateQuery: DateQuery) {
-    return this.repo.getSumOfSoldProductsByAllCashiers(
+  public countSoldProductsByUpc(upc: string, dateQuery: DateQuery) {
+    return this.repo.getSoldProductCountByUpc(
+      upc,
       dateQuery.startDate,
       dateQuery.endDate,
     )

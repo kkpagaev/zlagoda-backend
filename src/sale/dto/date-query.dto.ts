@@ -1,6 +1,5 @@
 import { ApiProperty } from "@nestjs/swagger"
-import { Type } from "class-transformer"
-import { IsDate, IsNotEmpty } from "class-validator"
+import { IsISO8601 } from "class-validator"
 
 export class DateQuery {
   @ApiProperty({
@@ -8,18 +7,14 @@ export class DateQuery {
     example: "2021-01-01",
     type: Date,
   })
-  @IsDate()
-  @Type(() => Date)
-  @IsNotEmpty()
-  public startDate: Date
+  @IsISO8601({ strict: true })
+  public startDate: string
 
   @ApiProperty({
     description: "The end date of the query",
     example: "2023-01-01",
     type: Date,
   })
-  @IsDate()
-  @Type(() => Date)
-  @IsNotEmpty()
-  public endDate: Date
+  @IsISO8601({ strict: true })
+  public endDate: string
 }

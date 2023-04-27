@@ -94,16 +94,19 @@ export class SaleRepository {
   }
 
   // Визначити загальну суму проданих товарів з чеків, створених певним касиром за певний період часу
-  public getSumOfSoldProductsByCashierId(
-    cashierId: number,
-    startDate: Date,
-    endDate: Date,
+  public getTotalRevenueByCashier(
+    cashierId: string,
+    startDate: string,
+    endDate: string,
   ): Promise<number> {
     return this.pool
       .query(
-        `SELECT COUNT(*) AS sum FROM "Sale" AS s
+        `SELECT SUM(s.product_number * s.selling_price) AS sum FROM "Sale" AS s
         LEFT JOIN "Check" AS c ON c."check_number" = s."check_number"
-        WHERE c."id_employee" = $1 AND c."print_date" BETWEEN $2 AND $3
+        LEFT JOIN "Employee" AS e ON c."id_employee" = e."id_employee"
+        WHERE c."id_employee" = $1 
+          AND e.role = 'cashier'
+          AND c."print_date" BETWEEN $2 AND $3
 `,
         [cashierId, startDate, endDate],
       )
@@ -111,15 +114,14 @@ export class SaleRepository {
   }
 
   // Визначити загальну суму проданих товарів з чеків, створених усіма касирами за певний період часу
-  public getSumOfSoldProductsByAllCashiers(
-    startDate: Date,
-    endDate: Date,
-  ): Promise<number> {
+  public getTotalRevenue(startDate: string, endDate: string): Promise<number> {
     return this.pool
       .query(
-        `SELECT COUNT(*) AS sum FROM "Sale" AS s
+        `SELECT SUM(s.product_number * s.selling_price) AS sum FROM "Sale" AS s
         LEFT JOIN "Check" AS c ON c."check_number" = s."check_number"
+        LEFT JOIN "Employee" AS e ON c."id_employee" = e."id_employee"
         WHERE c."print_date" BETWEEN $1 AND $2
+          AND e.role = 'cashier'
 `,
         [startDate, endDate],
       )
@@ -127,18 +129,18 @@ export class SaleRepository {
   }
 
   // Визначити загальну кількість одиниць певного товару, проданого за певний період часу.
-  public getSumOfSoldProductByProductNumber(
-    productNumber: number,
-    startDate: Date,
-    endDate: Date,
+  public getSoldProductCountByUpc(
+    upc: string,
+    startDate: string,
+    endDate: string,
   ): Promise<number> {
     return this.pool
       .query(
-        `SELECT COUNT(*) AS sum FROM "Sale" AS s
+        `SELECT SUM(s.product_number) AS sum FROM "Sale" AS s
         LEFT JOIN "Check" AS c ON c."check_number" = s."check_number"
-        WHERE s."product_number" = $1 AND c."print_date" BETWEEN $2 AND $3
+        WHERE s."UPC" = $1 AND c."print_date" BETWEEN $2 AND $3
 `,
-        [productNumber, startDate, endDate],
+        [upc, startDate, endDate],
       )
       .then((res) => +res.rows[0].sum)
   }
