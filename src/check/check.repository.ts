@@ -38,6 +38,31 @@ export class CheckRepository {
       .then((res) => res.rows.map((row) => Check.fromRow(row)))
   }
 
+  public findAllByDates(startDate: string, endDate: string): Promise<Check[]> {
+    return this.pool
+      .query<CheckEntity>(
+        `SELECT * FROM "Check" c 
+        WHERE c.print_date BETWEEN $1 AND $2`,
+        [startDate, endDate],
+      )
+      .then((res) => res.rows.map((row) => Check.fromRow(row)))
+  }
+
+  public findAllByDatesAndCashier(
+    employeeId: string,
+    startDate: string,
+    endDate: string,
+  ): Promise<Check[]> {
+    return this.pool
+      .query<CheckEntity>(
+        `SELECT * FROM "Check" c 
+        WHERE c.print_date BETWEEN $1 AND $2
+          AND c.id_employee = $3`,
+        [startDate, endDate, employeeId],
+      )
+      .then((res) => res.rows.map((row) => Check.fromRow(row)))
+  }
+
   public findOne(checkNumber: string): Promise<Check | null> {
     return this.pool
       .query<CheckEntity>(`SELECT * FROM "Check" WHERE "check_number" = $1`, [
