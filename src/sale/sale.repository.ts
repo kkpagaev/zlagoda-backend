@@ -125,4 +125,21 @@ export class SaleRepository {
       )
       .then((res) => +res.rows[0].sum)
   }
+
+  // Визначити загальну кількість одиниць певного товару, проданого за певний період часу.
+  public getSumOfSoldProductByProductNumber(
+    productNumber: number,
+    startDate: Date,
+    endDate: Date,
+  ): Promise<number> {
+    return this.pool
+      .query(
+        `SELECT COUNT(*) AS sum FROM "Sale" AS s
+        LEFT JOIN "Check" AS c ON c."check_number" = s."check_number"
+        WHERE s."product_number" = $1 AND c."print_date" BETWEEN $2 AND $3
+`,
+        [productNumber, startDate, endDate],
+      )
+      .then((res) => +res.rows[0].sum)
+  }
 }
