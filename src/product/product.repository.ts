@@ -72,6 +72,18 @@ export class ProductRepository {
       )
   }
 
+  public findLikeName(name: string): Promise<Product[]> {
+    return this.pool
+      .query<ProductEntity & CategoryEntity>(
+        `SELECT p.*, c.* FROM "Product" AS p
+        LEFT JOIN "Category" AS c
+        ON c.category_number = p.category_number
+        WHERE p.product_name LIKE $1`,
+        [`%${name}%`],
+      )
+      .then((res) => res.rows.map((row) => Product.fromRow(row, row)))
+  }
+
   public findOneOrFail(id: number): Promise<Product> {
     return this.findOne(id).then(
       throwIfNoValue(() => new NotFoundException("Product not found")),
