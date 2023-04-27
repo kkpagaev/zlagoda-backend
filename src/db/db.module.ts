@@ -16,6 +16,13 @@ const dbProvider = {
       password: conf.get("DB_PWD"),
       port: conf.get("DB_PORT"),
     })
+    pool.on("error", (err) => {
+      console.error("Unexpected error on idle client", err)
+    })
+
+    pool.on("connect", (client) => {
+      console.log("Connected to DB")
+    })
 
     return pool
   },

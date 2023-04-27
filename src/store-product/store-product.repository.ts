@@ -8,6 +8,7 @@ import { StoreProduct } from "./entities/store-product.model"
 import { nullable } from "pratica"
 import { throwIfNoValue } from "src/shared/utils/throw-if-no-value"
 import { ProductEntity } from "src/product/entities/product.entity"
+import { StoreProductQuery } from "./dto/prom-store-product-query.dto"
 
 @Injectable()
 export class StoreProductRepository {
@@ -148,5 +149,38 @@ export class StoreProductRepository {
             .map((row) => StoreProduct.fromRow(row))
             .value() ?? null,
       )
+  }
+
+  // Отримати інформацію про усі акційні товари, відсортовані за кількістю
+  // одиниць товару за назвою
+  public filterProducts({
+    orderBy,
+    isPromotional,
+  }: StoreProductQuery): Promise<StoreProduct[]> {
+    if (orderBy === "number") {
+      return this.pool
+        .query<StoreProductEntity & ProductEntity>(
+          `SELECT sp.*, p.* FROM "Store_Product" AS sp
+        LEFT JOIN "Product" AS p
+        ON p.id_product = sp.id_product
+        WHERE sp.promotional_product = $1
+        ORDER BY sp.products_number
+        DESC`,
+          [isPromotional],
+        )
+        .then((res) => res.rows.map((row) => StoreProduct.fromRow(row, row)))
+    } else {
+      return this.pool
+        .query<StoreProductEntity & ProductEntity>(
+          `SELECT sp.*, p.* FROM "Store_Product" AS sp
+        LEFT JOIN "Product" AS p
+        ON p.id_product = sp.id_product
+        WHERE sp.promotional_product = true
+        ORDER BY p.product_name
+        ASC`,
+          [isPromotional],
+        )
+        .then((res) => res.rows.map((row) => StoreProduct.fromRow(row, row)))
+    }
   }
 }

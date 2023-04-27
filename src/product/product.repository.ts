@@ -8,6 +8,7 @@ import { Product } from "./entities/product.model"
 import { nullable } from "pratica"
 import { throwIfNoValue } from "src/shared/utils/throw-if-no-value"
 import { CategoryEntity } from "src/category/entities/category.entity"
+import { StoreProductQuery } from "src/store-product/dto/prom-store-product-query.dto"
 
 @Injectable()
 export class ProductRepository {
