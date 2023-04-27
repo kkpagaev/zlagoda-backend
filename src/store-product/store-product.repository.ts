@@ -44,20 +44,24 @@ export class StoreProductRepository {
 
   public findAll(): Promise<StoreProduct[]> {
     return this.pool
-      .query<StoreProductEntity>(
-        `SELECT * FROM "Store_Product"
-        ORDER BY "UPC"`,
+      .query<StoreProductEntity & ProductEntity>(
+        `SELECT sp.*, p.* FROM "Store_Product" AS sp
+        LEFT JOIN "Product" AS p
+        ON p.id_product = sp.id_product
+        ORDER BY sp."UPC"`,
       )
-      .then((res) => res.rows.map((row) => StoreProduct.fromRow(row)))
+      .then((res) => res.rows.map((row) => StoreProduct.fromRow(row, row)))
   }
 
   public findAllSortByProductNumber(): Promise<StoreProduct[]> {
     return this.pool
-      .query<StoreProductEntity>(
-        `SELECT * FROM "Store_Product"
-        ORDER BY "products_number"`,
+      .query<StoreProductEntity & ProductEntity>(
+        `SELECT sp.*, p.* FROM "Store_Product" AS sp
+        LEFT JOIN "Product" AS p
+        ON p.id_product = sp.id_product
+        ORDER BY sp."products_number"`,
       )
-      .then((res) => res.rows.map((row) => StoreProduct.fromRow(row)))
+      .then((res) => res.rows.map((row) => StoreProduct.fromRow(row, row)))
   }
 
   public findOne(upc: string): Promise<StoreProduct | null> {
