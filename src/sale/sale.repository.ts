@@ -92,4 +92,37 @@ export class SaleRepository {
         affected: res.rowCount,
       }))
   }
+
+  // Визначити загальну суму проданих товарів з чеків, створених певним касиром за певний період часу
+  public getSumOfSoldProductsByCashierId(
+    cashierId: number,
+    startDate: Date,
+    endDate: Date,
+  ): Promise<number> {
+    return this.pool
+      .query(
+        `SELECT COUNT(*) AS sum FROM "Sale" AS s
+        LEFT JOIN "Check" AS c ON c."check_number" = s."check_number"
+        WHERE c."id_employee" = $1 AND c."print_date" BETWEEN $2 AND $3
+`,
+        [cashierId, startDate, endDate],
+      )
+      .then((res) => +res.rows[0].sum)
+  }
+
+  // Визначити загальну суму проданих товарів з чеків, створених усіма касирами за певний період часу
+  public getSumOfSoldProductsByAllCashiers(
+    startDate: Date,
+    endDate: Date,
+  ): Promise<number> {
+    return this.pool
+      .query(
+        `SELECT COUNT(*) AS sum FROM "Sale" AS s
+        LEFT JOIN "Check" AS c ON c."check_number" = s."check_number"
+        WHERE c."print_date" BETWEEN $1 AND $2
+`,
+        [startDate, endDate],
+      )
+      .then((res) => +res.rows[0].sum)
+  }
 }
