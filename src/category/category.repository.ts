@@ -62,4 +62,22 @@ export class CategoryRepository {
         affected: res.rowCount,
       }))
   }
+
+  public categoriesProductsCounts() {
+    return this.pool
+      .query(
+        `SELECT
+          c."category_number",
+          c."category_name",
+          SUM(sp."products_number") AS "products_number"
+        FROM "Category" AS c
+        LEFT JOIN "Product" AS p
+        ON p."category_number" = c."category_number"
+        LEFT JOIN "Store_Product" AS sp
+        ON sp."id_product" = p."id_product"
+        GROUP BY 1, 2
+        ORDER BY "products_number" DESC`,
+      )
+      .then((res) => res.rows)
+  }
 }
