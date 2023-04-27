@@ -25,16 +25,17 @@ export class CheckService {
     return this.checkRepo.findAll().then((checks) =>
       Promise.all(
         checks.map(async (check) => {
-          const sales = await this.saleRepo.findAllForCheck(check.checkNumber)
-          check.sales = sales
+          check.sales = await this.saleRepo.findAllForCheck(check.checkNumber)
           return check
         }),
       ),
     )
   }
 
-  public findOne(checkNumber: string) {
-    return this.checkRepo.findOneOrFail(checkNumber)
+  public async findOne(checkNumber: string) {
+    const check = await this.checkRepo.findOneOrFail(checkNumber)
+    check.sales = await this.saleRepo.findAllForCheck(check.checkNumber)
+    return check
   }
 
   public remove(checkNumber: string) {
