@@ -5,6 +5,7 @@ import { CustomerCardModule } from "src/customer-card/customer-card.module"
 import { DbModule } from "src/db/db.module"
 import { EmployeeModule } from "src/employee/employee.module"
 import { ProductModule } from "src/product/product.module"
+import { SaleModule } from "src/sale/sale.module"
 import { StoreProductModule } from "src/store-product/store-product.module"
 import { SeedService } from "./seed.service"
 
@@ -13,6 +14,7 @@ import { SeedService } from "./seed.service"
     DbModule,
     CategoryModule,
     CheckModule,
+    SaleModule,
     ProductModule,
     EmployeeModule,
     CustomerCardModule,

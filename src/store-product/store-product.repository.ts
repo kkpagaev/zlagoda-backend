@@ -130,4 +130,19 @@ export class StoreProductRepository {
         affected: res.rowCount,
       }))
   }
+
+  getRandom() {
+    return this.pool
+      .query<StoreProductEntity>(
+        `SELECT * FROM "Store_Product"
+        ORDER BY random()
+        LIMIT 1`,
+      )
+      .then(
+        (res) =>
+          nullable(res.rows[0])
+            .map((row) => StoreProduct.fromRow(row))
+            .value() ?? null,
+      )
+  }
 }

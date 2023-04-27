@@ -31,4 +31,8 @@ export class StoreProductService {
   public remove(upc: string) {
     return this.repo.remove(upc)
   }
+
+  getRandom() {
+    return this.repo.getRandom()
+  }
 }

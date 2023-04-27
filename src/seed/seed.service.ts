@@ -14,20 +14,22 @@ import { CreateProductDto } from "src/product/dto/create-product.dto"
 import { CreateStoreProductDto } from "src/store-product/dto/create-store-product.dto"
 import { CreateCustomerCardDto } from "src/customer-card/dto/create-customer-card.dto"
 import { CreateCheckDto } from "src/check/dto/create-check.dto"
+import { CheckService } from "src/check/check.service"
+import { CreateSaleDto } from "src/sale/dto/create-sale.dto"
 
 @Injectable()
 export class SeedService {
   constructor(
     private customerCardService: CustomerCardService,
     private categoryService: CategoryService,
-    private checkRepository: CheckRepository,
+    private checkRepository: CheckService,
     private productService: ProductService,
     private storeProductService: StoreProductService,
     private employeeService: EmployeeService,
   ) {}
 
   async seed() {
-    for (let i = 0; i < 100; i++) {
+    for (let i = 0; i < 10; i++) {
       this.seedProduct()
     }
 
@@ -41,13 +43,26 @@ export class SeedService {
   }
 
   async seedCheck(employee: string, card: string) {
-    const dto = this.createCheckDto(employee, card)
+    const dto = await this.createCheckDto(employee, card)
     console.log(`creating check number: ${dto.checkNumber}`)
-    const check = await this.checkRepository.save(dto)
+    const check = await this.checkRepository.create(dto)
     return check
   }
 
-  createCheckDto(employee: string, card: string): CreateCheckDto {
+  async createCheckDto(employee: string, card: string) {
+    const sales: Array<CreateSaleDto> = []
+    for (let i = 0; i < Math.floor(Math.random() * 26) + 5; i++) {
+      const storeProduct = await this.storeProductService.getRandom()
+      sales.push({
+        upc: storeProduct.upc,
+        sellingPrice: storeProduct.sellingPrice,
+        amount: faker.datatype.number({
+          min: 1,
+          max: 10,
+        }),
+      })
+    }
+
     return {
       employeeId: employee,
       cardNumber: card,
@@ -55,7 +70,7 @@ export class SeedService {
       sumTotal: faker.datatype.number(100000),
       printDate: faker.date.past().toISOString().split("T")[0],
       valueAddedTax: faker.datatype.number(100),
-      sales: [],
+      sales: sales,
     }
   }
 
@@ -89,16 +104,13 @@ export class SeedService {
     console.log(`creating category name: ${dto.name}`)
     const category = await this.categoryService.create(dto)
 
-    for (let i = 0; i < 10; i++) {
+    for (let i = 0; i < Math.floor(Math.random() * 26) + 5; i++) {
       const productDto = this.createProductDto(category.number)
       console.log(`creating product name: ${productDto.name}`)
       const product = await this.productService.save(productDto)
       const storeProductDto = this.createStoreProductDto(product.id)
       console.log(`creating store product upc: ${storeProductDto.upc}`)
-      const storeProduct = await this.storeProductService.create(
-        storeProductDto,
-      )
-      return storeProduct
+      await this.storeProductService.create(storeProductDto)
     }
   }
 
