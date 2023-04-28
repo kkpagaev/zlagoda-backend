@@ -32,6 +32,17 @@ export class CategoryRepository {
       .then((res) => res.rows.map((row) => Category.fromRow(row)))
   }
 
+  public findAllWithProductCount(): Promise<Category[]> {
+    return this.pool
+      .query<CategoryEntity>(
+        `SELECT c.category_number, c.category_name, COUNT(p.*) as products_count FROM "Category" c 
+        LEFT JOIN "Product" p  ON p."category_number" = c."category_number"
+        GROUP BY c.category_number, c.category_name
+        ORDER BY category_name`,
+      )
+      .then((res) => res.rows.map((row) => Category.fromRow(row)))
+  }
+
   public findOne(id: number): Promise<Category | null> {
     return this.pool
       .query<CategoryEntity>(
