@@ -15,7 +15,7 @@ export class CategoryService {
   }
 
   public findAll(): Promise<Category[]> {
-    return this.repo.findAllWithProductCount()
+    return this.repo.categoriesProductsCounts()
   }
 
   public findOne(id: number): Promise<Category | null> {
