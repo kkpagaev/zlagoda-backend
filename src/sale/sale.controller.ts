@@ -31,4 +31,10 @@ export class SaleController {
   ) {
     return this.saleService.countSoldProductsByUpc(upc, dateQuery)
   }
+
+  @Get("/dashboard")
+  @ApiBearerAuth("jwt")
+  public countSoldProducts(@Query() dateQuery: DateQuery) {
+    return this.saleService.countSoldProducts(dateQuery)
+  }
 }

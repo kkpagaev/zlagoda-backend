@@ -47,4 +47,8 @@ export class SaleService {
       dateQuery.endDate,
     )
   }
+
+  countSoldProducts(dateQuery: DateQuery) {
+    return this.repo.getOveralStatistics(dateQuery.startDate, dateQuery.endDate)
+  }
 }

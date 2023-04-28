@@ -104,7 +104,7 @@ export class SaleRepository {
         `SELECT SUM(s.product_number * s.selling_price) AS sum FROM "Sale" AS s
         LEFT JOIN "Check" AS c ON c."check_number" = s."check_number"
         LEFT JOIN "Employee" AS e ON c."id_employee" = e."id_employee"
-        WHERE c."id_employee" = $1 
+        WHERE c."id_employee" = $1
           AND e.role = 'cashier'
           AND c."print_date" BETWEEN $2 AND $3
 `,
@@ -117,12 +117,13 @@ export class SaleRepository {
   public getTotalRevenue(startDate: string, endDate: string): Promise<number> {
     return this.pool
       .query(
-        `SELECT SUM(s.product_number * s.selling_price) AS sum FROM "Sale" AS s
+        `
+        SELECT SUM(s.product_number * s.selling_price) AS sum FROM "Sale" AS s
         LEFT JOIN "Check" AS c ON c."check_number" = s."check_number"
         LEFT JOIN "Employee" AS e ON c."id_employee" = e."id_employee"
         WHERE c."print_date" BETWEEN $1 AND $2
-          AND e.role = 'cashier'
-`,
+        AND e.role = 'cashier'
+        `,
         [startDate, endDate],
       )
       .then((res) => +res.rows[0].sum)
@@ -136,12 +137,29 @@ export class SaleRepository {
   ): Promise<number> {
     return this.pool
       .query(
-        `SELECT SUM(s.product_number) AS sum FROM "Sale" AS s
+        `
+        SELECT SUM(s.product_number) AS sum FROM "Sale" AS s
         LEFT JOIN "Check" AS c ON c."check_number" = s."check_number"
         WHERE s."UPC" = $1 AND c."print_date" BETWEEN $2 AND $3
-`,
+        `,
         [upc, startDate, endDate],
       )
       .then((res) => +res.rows[0].sum)
+  }
+
+  public getOveralStatistics(startDate: string, endDate: string) {
+    return this.pool
+      .query(
+        `
+      SELECT date_trunc('day', c.print_date) as sale_date, COUNT(s.check_number) as total_sales
+      FROM "Check" c
+      INNER JOIN "Sale" S ON c.check_number = s.check_number
+      WHERE date_trunc('day', c.print_date) BETWEEN $1 AND $2
+      GROUP BY sale_date
+      ORDER BY sale_date;
+      `,
+        [startDate, endDate],
+      )
+      .then((res) => res.rows)
   }
 }
